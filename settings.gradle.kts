@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ispaid"
 include(":app")
- 
+include(":app:isPaidLibrary")
