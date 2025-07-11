@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.android )
     id("maven-publish")
 }
 
@@ -47,6 +47,9 @@ dependencies {
 
     // GSON
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+
+    //logging interceptor
+//    implementation ("com.squareup.okhttp3:logging-interceptor:5.1.0")
 }
 
 publishing {
