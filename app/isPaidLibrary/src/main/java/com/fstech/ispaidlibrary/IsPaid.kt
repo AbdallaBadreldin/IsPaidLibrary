@@ -13,6 +13,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -25,10 +27,10 @@ import kotlin.system.exitProcess
 <uses-permission android:name="android.permission.INTERNET" />
 */
 
-class IsPaid(private val context: Context) : Builder {
-    private var message: String = "Please Contact Developer!!!...."
-    private var url: String =
-        "https://raw.githubusercontent.com/AbdallaBadreldin/IsPaid/refs/heads/main/ISPaide.txt"
+class IsPaid(private val context: Context){
+     var message: String = "Please Contact Developer!!!...."
+     var url: String =
+        "https://raw.githubusercontent.com/AbdallaBadreldin/IsPaid/refs/heads/main/ISPaide.txt/"
 
     private val sharedPref: SharedPreferences by lazy {
         context.getSharedPreferences(
@@ -36,13 +38,7 @@ class IsPaid(private val context: Context) : Builder {
         )
     }
 
-    override fun setMessage(message: String) {
-        this.message = message
-    }
 
-    override fun setUrl(url: String) {
-        this.url = url
-    }
 
     private val handler = CoroutineExceptionHandler { context, exception ->
         println("Caught $exception")
@@ -69,17 +65,32 @@ class IsPaid(private val context: Context) : Builder {
     }
 
     fun build() {
-        // may use instead of global
-        // CoroutineScope(Dispatchers.IO).launch(handler) {
-        val gson = GsonBuilder().setLenient().create()
-        val retrofit = Retrofit.Builder().baseUrl(url)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
+        val instance: QuotesApi by lazy {
+            val gson = GsonBuilder().create()
 
-        val quotesApi = retrofit.create(QuotesApi::class.java)
+            val logging = HttpLoggingInterceptor()
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+            // Create OkHttpClient
+            val okHttpClient = OkHttpClient.Builder().apply {
+                addInterceptor(logging)
+                build()
+            }
+
+            // Create Retrofit instance
+            val retrofit = Retrofit.Builder()
+                .baseUrl(url)
+                .client(okHttpClient.build()) // Set the custom OkHttpClient
+                .addConverterFactory(GsonConverterFactory.create(gson)) // Or your preferred converter
+                .build()
+
+            retrofit.create(QuotesApi::class.java)
+        }
+
+
         // launching a new coroutine
         GlobalScope.launch(handler) {
-            val result = quotesApi.getIsUserPaid()
+            val result = instance.getIsUserPaid()
             if (result != null) {
                 sharedPref.edit { putBoolean("isPaid", result.body()!!.isPaid) }
                 Log.d("IsPaid", "isPaid: ${result.body()!!.isPaid}")
@@ -98,13 +109,19 @@ class IsPaid(private val context: Context) : Builder {
         }
     }
 
-    interface QuotesApi {
-        @GET("ISPaide.txt")
-        suspend fun getIsUserPaid(): Response<PaidResponse>
-    }
 
-    data class PaidResponse(
-        val isPaid: Boolean
-    )
+
 
 }
+interface QuotesApi {
+    @GET(" ")
+    suspend fun getIsUserPaid(): Response<PaidResponse>
+}
+
+data class PaidResponse(
+    val isPaid: Boolean
+)
+
+/**
+ * Builder interface defines all possible ways to configure a product.
+ */

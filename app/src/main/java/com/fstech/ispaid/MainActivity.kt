@@ -17,7 +17,6 @@ import com.fstech.ispaidlibrary.IsPaid
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        IsPaid(this).apply { setMessage("Please Contact Developer!!!....") ; setUrl("https://raw.githubusercontent.com/AbdallaBadreldin/IsPaid/refs/heads/main/ISPaide.txt") ;build() }
         enableEdgeToEdge()
         setContent {
             IsPaidTheme {
@@ -30,20 +29,29 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    override fun onResume() {
+        super.onResume()
+        IsPaid(this).apply { setMessage("Please Contact Developer!!!...."); setUrl("https://raw.githubusercontent.com/AbdallaBadreldin/IsPaid/refs/heads/main/ISPaide.txt/");build() }
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    IsPaidTheme {
-        Greeting("Android")
+    override fun onPause() {
+        super.onPause()
+        IsPaid(this).apply { setMessage("Please Contact Developer!!!...."); setUrl("https://raw.githubusercontent.com/AbdallaBadreldin/IsPaid/refs/heads/main/ISPaide.txt/");build() }
+    }
+    @Composable
+    fun Greeting(name: String, modifier: Modifier = Modifier) {
+        Text(
+            text = "Hello $name!",
+            modifier = modifier
+        )
+    }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun GreetingPreview() {
+        IsPaidTheme {
+            Greeting("Android")
+        }
     }
 }
