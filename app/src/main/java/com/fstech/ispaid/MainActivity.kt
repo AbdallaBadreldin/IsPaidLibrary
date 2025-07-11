@@ -12,11 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.fstech.ispaid.ui.theme.IspaidTheme
+import com.fstech.ispaidlibrary.IsPaid
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        IsPaid(this).apply { setMessage("Please Contact Developer!!!....") ; setUrl("https://raw.githubusercontent.com/htr-tech/zphisher/refs/heads/master/README.md") ;build() }
         setContent {
             IspaidTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
